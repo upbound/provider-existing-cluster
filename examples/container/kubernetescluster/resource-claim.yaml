@@ -1,0 +1,13 @@
+---
+apiVersion: compute.crossplane.io/v1alpha1
+kind: KubernetesCluster
+metadata:
+  name: app-kubernetes
+  label:
+    example: "true"
+spec:
+  classSelector:
+    matchLabels:
+      example: "true"
+  writeConnectionSecretToRef:
+    name: k8scluster

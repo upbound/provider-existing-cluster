@@ -1,0 +1,49 @@
+# Human readable title of application.
+title: Crossplane Existing Cluster Stack
+
+overviewShort: The Existing Cluster Stack enables mocking cluster creation with an existing cluster for development/testing purposes.
+overview: |-
+  TODO
+# Markdown description of this entry
+readme: |
+ TODO
+# Version of project (optional)
+# If omitted the version will be filled with the docker tag
+# If set it must match the docker tag
+version: 0.0.1
+
+# Maintainer names and emails.
+maintainers:
+- name: Hasan Turken
+  email: hasan@upbound.io
+
+# Owner names and emails.
+owners:
+- name: Hasan Turken
+  email: hasan@upbound.io
+
+# Human readable company name
+company: Crossplane
+
+# Primary category describing this stack
+category: Infrastructure
+
+# Keywords that describe this application and help search indexing
+keywords:
+- "existing"
+- "development"
+- "testing"
+
+# Links to more information about the application (about page, source code, etc.)
+website: "https://crossplane.io"
+source: "https://github.com/turkenh/stack-existing-cluster"
+
+# RBAC ClusterRoles will be generated permitting this stack to use all verbs on all
+# resources in the groups listed below.
+permissionScope: Cluster
+dependsOn:
+- crd: '*.compute.crossplane.io/v1alpha1'
+- crd: '*.core.crossplane.io/v1alpha1'
+
+# License SPDX name: https://spdx.org/licenses/
+license: Apache-2.0

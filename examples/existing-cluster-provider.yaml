@@ -1,0 +1,20 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  namespace: crossplane-system
+  name: example-provider-existing-cluster
+type: Opaque
+data:
+  kubeconfig: BASE64ENCODED_KUBECONFIG_FILE
+---
+# GCP Provider with service account secret reference - used to provision cache resources
+apiVersion: dev.crossplane.io/v1beta1
+kind: Provider
+metadata:
+  name: example
+spec:
+  credentialsSecretRef:
+    namespace: crossplane-system
+    name: example-provider-existing-cluster
+    key: kubeconfig
