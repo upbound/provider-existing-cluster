@@ -24,6 +24,7 @@ import (
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/client-go/tools/clientcmd"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -138,7 +139,21 @@ func (e *clusterExternal) Delete(ctx context.Context, mg resource.Managed) error
 
 // connectionSecret return secret object for cluster instance
 func connectionDetails(rawConfig []byte) managed.ConnectionDetails {
+	config, err := clientcmd.Load(rawConfig)
+	if err != nil {
+		return nil
+	}
+	ctx := config.CurrentContext
+	cluster := config.Contexts[ctx].Cluster
+	user := config.Contexts[ctx].AuthInfo
 	cd := managed.ConnectionDetails{
+		runtimev1alpha1.ResourceCredentialsSecretEndpointKey: []byte(config.Clusters[cluster].Server),
+		//runtimev1alpha1.ResourceCredentialsSecretUserKey:       []byte(config.AuthInfos[user].Username),
+		runtimev1alpha1.ResourceCredentialsSecretUserKey:       []byte(user),
+		runtimev1alpha1.ResourceCredentialsSecretPasswordKey:   []byte(config.AuthInfos[user].Password),
+		runtimev1alpha1.ResourceCredentialsSecretCAKey:         config.Clusters[cluster].CertificateAuthorityData,
+		runtimev1alpha1.ResourceCredentialsSecretClientCertKey: config.AuthInfos[user].ClientCertificateData,
+		runtimev1alpha1.ResourceCredentialsSecretClientKeyKey:  config.AuthInfos[user].ClientKeyData,
 		runtimev1alpha1.ResourceCredentialsSecretKubeconfigKey: rawConfig,
 	}
 	return cd
