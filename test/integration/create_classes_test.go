@@ -30,9 +30,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/yaml"
 
-	"github.com/crossplaneio/stack-existing-cluster/apis"
-	containerv1beta1 "github.com/crossplaneio/stack-existing-cluster/apis/container/v1beta1"
-	"github.com/crossplaneio/stack-existing-cluster/pkg/controller"
+	"github.com/turkenh/stack-existing-cluster/apis"
+	containerv1beta1 "github.com/turkenh/stack-existing-cluster/apis/container/v1beta1"
+	"github.com/turkenh/stack-existing-cluster/pkg/controller"
 )
 
 func TestCreateAllClasses(t *testing.T) {

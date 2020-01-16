@@ -1,4 +1,4 @@
-module github.com/crossplaneio/stack-existing-cluster
+module github.com/turkenh/stack-existing-cluster
 
 go 1.12
 
@@ -13,4 +13,5 @@ require (
 	k8s.io/client-go v0.0.0-20190918160344-1fbdaa4c8d90
 	sigs.k8s.io/controller-runtime v0.4.0
 	sigs.k8s.io/controller-tools v0.2.4
+	sigs.k8s.io/yaml v1.1.0
 )

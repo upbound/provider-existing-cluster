@@ -32,7 +32,7 @@ import (
 	"github.com/crossplaneio/crossplane-runtime/pkg/resource"
 	computev1alpha1 "github.com/crossplaneio/crossplane/apis/compute/v1alpha1"
 
-	"github.com/crossplaneio/stack-existing-cluster/apis/container/v1beta1"
+	"github.com/turkenh/stack-existing-cluster/apis/container/v1beta1"
 )
 
 // A ExistingClusterClaimSchedulingController reconciles KubernetesCluster claims

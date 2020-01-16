@@ -19,7 +19,7 @@ package controller
 import (
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	"github.com/crossplaneio/stack-existing-cluster/pkg/controller/container"
+	"github.com/turkenh/stack-existing-cluster/pkg/controller/container"
 )
 
 // Controllers passes down config and adds individual controllers to the manager.
@@ -33,7 +33,7 @@ func (c *Controllers) SetupWithManager(mgr ctrl.Manager) error {
 		&container.ExistingClusterClaimSchedulingController{},
 		&container.ExistingClusterClaimDefaultingController{},
 		&container.ExistingClusterClaimController{},
-		&container.ExistingClusterClaimController{},
+		&container.ExistingClusterController{},
 	}
 	for _, c := range controllers {
 		if err := c.SetupWithManager(mgr); err != nil {

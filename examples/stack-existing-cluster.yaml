@@ -5,4 +5,4 @@ metadata:
   name: stack-existing-cluster
   namespace: crossplane-system
 spec:
-  package: "turkenh/stack-gcp:master"
+  package: "turkenh/stack-existing-cluster:master"

@@ -21,21 +21,20 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/crossplaneio/crossplane-runtime/pkg/meta"
-	v1beta12 "github.com/crossplaneio/stack-existing-cluster/apis/v1beta1"
-	"k8s.io/apimachinery/pkg/types"
-
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/crossplaneio/crossplane-runtime/apis/core/v1alpha1"
 	runtimev1alpha1 "github.com/crossplaneio/crossplane-runtime/apis/core/v1alpha1"
+	"github.com/crossplaneio/crossplane-runtime/pkg/meta"
 	"github.com/crossplaneio/crossplane-runtime/pkg/reconciler/managed"
 	"github.com/crossplaneio/crossplane-runtime/pkg/resource"
 
-	"github.com/crossplaneio/stack-existing-cluster/apis/container/v1beta1"
+	"github.com/turkenh/stack-existing-cluster/apis/container/v1beta1"
+	v1beta12 "github.com/turkenh/stack-existing-cluster/apis/v1beta1"
 )
 
 // Error strings.
@@ -93,7 +92,7 @@ type clusterExternal struct {
 	configData []byte
 }
 
-func (e *clusterExternal) Observe(ctx context.Context, mg resource.Managed) (managed.ExternalObservation, error) { // nolint:gocyclo
+func (e *clusterExternal) Observe(ctx context.Context, mg resource.Managed) (managed.ExternalObservation, error) {
 	cr, ok := mg.(*v1beta1.ExistingCluster)
 	if !ok {
 		return managed.ExternalObservation{}, errors.New(errNotCluster)
