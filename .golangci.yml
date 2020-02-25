@@ -35,7 +35,7 @@ linters-settings:
   goimports:
     # put imports beginning with prefix after 3rd-party packages;
     # it's a comma-separated list of prefixes
-    local-prefixes: github.com/crossplaneio/stack-gcp
+    local-prefixes: github.com/crossplaneio/stack-existing-cluster
 
   gocyclo:
     # minimal code complexity to report, 30 by default (but we recommend 10-20)
@@ -108,7 +108,7 @@ linters:
     - interfacer
     - goconst
     - goimports
-    - gofmt  # We enable this as well as goimports for its simplify mode.
+    - gofmt # We enable this as well as goimports for its simplify mode.
     - prealloc
     - golint
     - unconvert
@@ -119,7 +119,6 @@ linters:
     - bugs
     - unused
   fast: false
-
 
 issues:
   # Excluding configuration per-path and per-linter
@@ -145,31 +144,31 @@ issues:
     # rather than using a pointer.
     - text: "(hugeParam|rangeValCopy):"
       linters:
-      - gocritic
+        - gocritic
 
     # This "TestMain should call os.Exit to set exit code" warning is not clever
     # enough to notice that we call a helper method that calls os.Exit.
     - text: "SA3000:"
       linters:
-      - staticcheck
+        - staticcheck
 
     - text: "k8s.io/api/core/v1"
       linters:
-      - goimports
+        - goimports
 
     # This is a "potential hardcoded credentials" warning. It's triggered by
     # any variable with 'secret' in the same, and thus hits a lot of false
     # positives in Kubernetes land where a Secret is an object type.
     - text: "G101:"
       linters:
-      - gosec
-      - gas
+        - gosec
+        - gas
 
     # This is an 'errors unhandled' warning that duplicates errcheck.
     - text: "G104:"
       linters:
-      - gosec
-      - gas
+        - gosec
+        - gas
 
   # Independently from option `exclude` we use default exclude patterns,
   # it can be disabled by this option. To list all

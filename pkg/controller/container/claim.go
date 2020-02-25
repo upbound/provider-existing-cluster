@@ -18,14 +18,14 @@ package container
 
 import (
 	"context"
-	"fmt"
-	"strings"
 
 	"github.com/pkg/errors"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
 	runtimev1alpha1 "github.com/crossplaneio/crossplane-runtime/apis/core/v1alpha1"
+	"github.com/crossplaneio/crossplane-runtime/pkg/event"
+	"github.com/crossplaneio/crossplane-runtime/pkg/logging"
 	"github.com/crossplaneio/crossplane-runtime/pkg/reconciler/claimbinding"
 	"github.com/crossplaneio/crossplane-runtime/pkg/reconciler/claimdefaulting"
 	"github.com/crossplaneio/crossplane-runtime/pkg/reconciler/claimscheduling"
@@ -35,18 +35,11 @@ import (
 	"github.com/turkenh/stack-existing-cluster/apis/container/v1beta1"
 )
 
-// A ExistingClusterClaimSchedulingController reconciles KubernetesCluster claims
-// that include a class selector but omit their class and resource references by
-// picking a random matching GKEClusterClass, if any.
-type ExistingClusterClaimSchedulingController struct{}
-
-// SetupWithManager sets up the ExistingClusterClaimSchedulingController using the
-// supplied manager.
-func (c *ExistingClusterClaimSchedulingController) SetupWithManager(mgr ctrl.Manager) error {
-	name := strings.ToLower(fmt.Sprintf("scheduler.%s.%s.%s",
-		computev1alpha1.KubernetesClusterKind,
-		v1beta1.ExistingClusterKind,
-		v1beta1.Group))
+// SetupExistingClusterClaimScheduling adds a controller that reconciles
+// KubernetesCluster claims that include a class selector but omit their class
+// and resource references by picking a random matching ExistingClusterClass, if any.
+func SetupExistingClusterClaimScheduling(mgr ctrl.Manager, l logging.Logger) error {
+	name := claimscheduling.ControllerName(computev1alpha1.KubernetesClusterGroupKind)
 
 	return ctrl.NewControllerManagedBy(mgr).
 		Named(name).
@@ -59,21 +52,16 @@ func (c *ExistingClusterClaimSchedulingController) SetupWithManager(mgr ctrl.Man
 		Complete(claimscheduling.NewReconciler(mgr,
 			resource.ClaimKind(computev1alpha1.KubernetesClusterGroupVersionKind),
 			resource.ClassKind(v1beta1.ExistingClusterClassGroupVersionKind),
+			claimscheduling.WithLogger(l.WithValues("controller", name)),
+			claimscheduling.WithRecorder(event.NewAPIRecorder(mgr.GetEventRecorderFor(name))),
 		))
 }
 
-// A ExistingClusterClaimDefaultingController reconciles KubernetesCluster claims
-// that omit their resource ref, class ref, and class selector by choosing a
-// default GKEClusterClass if one exists.
-type ExistingClusterClaimDefaultingController struct{}
-
-// SetupWithManager sets up the ExistingClusterClaimDefaultingController using the
-// supplied manager.
-func (c *ExistingClusterClaimDefaultingController) SetupWithManager(mgr ctrl.Manager) error {
-	name := strings.ToLower(fmt.Sprintf("defaulter.%s.%s.%s",
-		computev1alpha1.KubernetesClusterKind,
-		v1beta1.ExistingClusterKind,
-		v1beta1.Group))
+// SetupExistingClusterClaimDefaulting adds a controller that reconciles
+// KubernetesCluster claims that omit their resource ref, class ref, and class
+// selector by choosing a default ExistingClusterClass if one exists.
+func SetupExistingClusterClaimDefaulting(mgr ctrl.Manager, l logging.Logger) error {
+	name := claimdefaulting.ControllerName(computev1alpha1.KubernetesClusterGroupKind)
 
 	return ctrl.NewControllerManagedBy(mgr).
 		Named(name).
@@ -86,19 +74,16 @@ func (c *ExistingClusterClaimDefaultingController) SetupWithManager(mgr ctrl.Man
 		Complete(claimdefaulting.NewReconciler(mgr,
 			resource.ClaimKind(computev1alpha1.KubernetesClusterGroupVersionKind),
 			resource.ClassKind(v1beta1.ExistingClusterClassGroupVersionKind),
+			claimdefaulting.WithLogger(l.WithValues("controller", name)),
+			claimdefaulting.WithRecorder(event.NewAPIRecorder(mgr.GetEventRecorderFor(name))),
 		))
 }
 
-// A ExistingClusterClaimController reconciles KubernetesCluster claims with
-// GKEClusters, dynamically provisioning them if needed.
-type ExistingClusterClaimController struct{}
-
-// SetupWithManager adds a controller that reconciles KubernetesCluster resource claims.
-func (c *ExistingClusterClaimController) SetupWithManager(mgr ctrl.Manager) error {
-	name := strings.ToLower(fmt.Sprintf("%s.%s.%s",
-		computev1alpha1.KubernetesClusterKind,
-		v1beta1.ExistingClusterClassKind,
-		v1beta1.Group))
+// SetupExistingClusterClaimBinding adds a controller that reconciles
+// KubernetesCluster claims with ExistingClusters, dynamically provisioning them if
+// needed.
+func SetupExistingClusterClaimBinding(mgr ctrl.Manager, l logging.Logger) error {
+	name := claimbinding.ControllerName(computev1alpha1.KubernetesClusterGroupKind)
 
 	p := resource.NewPredicates(resource.AnyOf(
 		resource.HasClassReferenceKind(resource.ClassKind(v1beta1.ExistingClusterClassGroupVersionKind)),
@@ -110,11 +95,13 @@ func (c *ExistingClusterClaimController) SetupWithManager(mgr ctrl.Manager) erro
 		resource.ClaimKind(computev1alpha1.KubernetesClusterGroupVersionKind),
 		resource.ClassKind(v1beta1.ExistingClusterClassGroupVersionKind),
 		resource.ManagedKind(v1beta1.ExistingClusterGroupVersionKind),
+		claimbinding.WithBinder(claimbinding.NewAPIBinder(mgr.GetClient(), mgr.GetScheme())),
 		claimbinding.WithManagedConfigurators(
 			claimbinding.ManagedConfiguratorFn(ConfigureExistingCluster),
 			claimbinding.ManagedConfiguratorFn(claimbinding.ConfigureReclaimPolicy),
-			claimbinding.ManagedConfiguratorFn(claimbinding.ConfigureNames),
-		))
+			claimbinding.ManagedConfiguratorFn(claimbinding.ConfigureNames)),
+		claimbinding.WithLogger(l.WithValues("controller", name)),
+		claimbinding.WithRecorder(event.NewAPIRecorder(mgr.GetEventRecorderFor(name))))
 
 	return ctrl.NewControllerManagedBy(mgr).
 		Named(name).

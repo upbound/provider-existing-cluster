@@ -18,8 +18,6 @@ package container
 
 import (
 	"context"
-	"fmt"
-	"strings"
 
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
@@ -30,6 +28,8 @@ import (
 
 	"github.com/crossplaneio/crossplane-runtime/apis/core/v1alpha1"
 	runtimev1alpha1 "github.com/crossplaneio/crossplane-runtime/apis/core/v1alpha1"
+	"github.com/crossplaneio/crossplane-runtime/pkg/event"
+	"github.com/crossplaneio/crossplane-runtime/pkg/logging"
 	"github.com/crossplaneio/crossplane-runtime/pkg/meta"
 	"github.com/crossplaneio/crossplane-runtime/pkg/reconciler/managed"
 	"github.com/crossplaneio/crossplane-runtime/pkg/resource"
@@ -45,23 +45,19 @@ const (
 	errNotCluster        = "managed resource is not a ExistingCluster"
 )
 
-// ExistingClusterController is responsible for adding the ExistingCluster
-// controller and its corresponding reconciler to the manager with any runtime configuration.
-type ExistingClusterController struct{}
-
-// SetupWithManager creates a new Controller and adds it to the Manager with default RBAC. The Manager will set fields on the Controller
-// and Start it when the Manager is Started.
-func (c *ExistingClusterController) SetupWithManager(mgr ctrl.Manager) error {
-	r := managed.NewReconciler(mgr,
-		resource.ManagedKind(v1beta1.ExistingClusterGroupVersionKind),
-		managed.WithExternalConnecter(&clusterConnector{kube: mgr.GetClient()}))
-
-	name := strings.ToLower(fmt.Sprintf("%s.%s", v1beta1.ExistingClusterKindAPIVersion, v1beta1.Group))
+// SetupExistingCluster adds a controller that reconciles ExistingCluster
+// managed resources.
+func SetupExistingCluster(mgr ctrl.Manager, l logging.Logger) error {
+	name := managed.ControllerName(v1beta1.ExistingClusterGroupKind)
 
 	return ctrl.NewControllerManagedBy(mgr).
 		Named(name).
 		For(&v1beta1.ExistingCluster{}).
-		Complete(r)
+		Complete(managed.NewReconciler(mgr,
+			resource.ManagedKind(v1beta1.ExistingClusterGroupVersionKind),
+			managed.WithExternalConnecter(&clusterConnector{kube: mgr.GetClient()}),
+			managed.WithLogger(l.WithValues("controller", name)),
+			managed.WithRecorder(event.NewAPIRecorder(mgr.GetEventRecorderFor(name)))))
 }
 
 type clusterConnector struct {
