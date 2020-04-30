@@ -9,4 +9,5 @@ ADD stack /usr/local/bin/crossplane-existing-cluster-stack
 COPY stack-package /
 
 EXPOSE 8080
+USER 1001
 ENTRYPOINT ["crossplane-existing-cluster-stack", "--debug", "--sync=30s"]
