@@ -1,7 +1,7 @@
 # ====================================================================================
 # Setup Project
 
-PROJECT_NAME := stack-existing-cluster
+PROJECT_NAME := provider-existing-cluster
 PROJECT_REPO := github.com/turkenh/$(PROJECT_NAME)
 
 PLATFORMS ?= linux_amd64 linux_arm64
@@ -31,7 +31,7 @@ GO_TEST_PARALLEL := $(shell echo $$(( $(NPROCS) / 2 )))
 
 GO_INTEGRATION_TESTS_SUBDIRS = test
 
-GO_STATIC_PACKAGES = $(GO_PROJECT)/cmd/stack
+GO_STATIC_PACKAGES = $(GO_PROJECT)/cmd/provider
 GO_LDFLAGS += -X $(GO_PROJECT)/pkg/version.Version=$(VERSION)
 GO_SUBDIRS += cmd pkg apis
 GO111MODULE = on
@@ -42,16 +42,9 @@ GO111MODULE = on
 
 -include build/makelib/k8s_tools.mk
 
-# ====================================================================================
-# Setup Stacks
-
-STACK_PACKAGE=stack-package
-export STACK_PACKAGE
-STACK_PACKAGE_REGISTRY=$(STACK_PACKAGE)/.registry
-STACK_PACKAGE_REGISTRY_SOURCE=config/stack/manifests
-
+# Setup Images
 DOCKER_REGISTRY = crossplane
-IMAGES = stack-existing-cluster
+IMAGES = provider-existing-cluster provider-existing-cluster-controller
 -include build/makelib/image.mk
 
 # ====================================================================================
@@ -75,6 +68,14 @@ cobertura:
 	@cat $(GO_TEST_OUTPUT)/coverage.txt | \
 		grep -v zz_generated.deepcopy | \
 		$(GOCOVER_COBERTURA) > $(GO_TEST_OUTPUT)/cobertura-coverage.xml
+
+crds.clean:
+	@$(INFO) cleaning generated CRDs
+	@find package/crds -name *.yaml -exec sed -i.sed -e '1,2d' {} \; || $(FAIL)
+	@find package/crds -name *.yaml.sed -delete || $(FAIL)
+	@$(OK) cleaned generated CRDs
+
+generate: crds.clean
 
 # Ensure a PR is ready for review.
 reviewable: generate lint
@@ -111,43 +112,10 @@ run: go.build
 	@# To see other arguments that can be provided, run the command with --help instead
 	$(GO_OUT_DIR)/$(PROJECT_NAME) --debug
 
-# ====================================================================================
-# Stacks related targets
-
-# Initialize the stack package folder
-$(STACK_PACKAGE_REGISTRY):
-	@mkdir -p $(STACK_PACKAGE_REGISTRY)/resources
-	@touch $(STACK_PACKAGE_REGISTRY)/app.yaml $(STACK_PACKAGE_REGISTRY)/install.yaml
-
-build.artifacts: build-stack-package
-
-CRD_DIR=config/crd
-build-stack-package: $(STACK_PACKAGE_REGISTRY)
-# Copy CRDs over
-#
-# The reason this looks complicated is because it is
-# preserving the original crd filenames and changing
-# *.yaml to *.crd.yaml.
-#
-# An alternate and simpler-looking approach would
-# be to cat all of the files into a single crd.yaml,
-# but then we couldn't use per CRD metadata files.
-	@$(INFO) building stack package in $(STACK_PACKAGE)
-	@find $(CRD_DIR) -type f -name '*.yaml' | \
-		while read filename ; do cat $$filename > \
-		$(STACK_PACKAGE_REGISTRY)/resources/$$( basename $${filename/.yaml/.crd.yaml} ) \
-		; done
-	@cp -r $(STACK_PACKAGE_REGISTRY_SOURCE)/* $(STACK_PACKAGE_REGISTRY)
-
-clean: clean-stack-package
-
-clean-stack-package:
-	@rm -rf $(STACK_PACKAGE)
-
 manifests:
 	@$(INFO) Deprecated. Run make generate instead.
 
-.PHONY: cobertura reviewable submodules fallthrough test-integration run clean-stack-package build-stack-package manifests go-integration
+.PHONY: cobertura reviewable submodules fallthrough test-integration run manifests go-integration
 
 # ====================================================================================
 # Special Targets
@@ -158,8 +126,6 @@ Crossplane Targets:
     reviewable            Ensure a PR is ready for review.
     submodules            Update the submodules, such as the common build scripts.
     run                   Run crossplane locally, out-of-cluster. Useful for development.
-    build-stack-package   Builds the stack package contents in the stack package directory (./$(STACK_PACKAGE))
-    clean-stack-package   Cleans out the generated stack package directory (./$(STACK_PACKAGE))
 
 endef
 # The reason CROSSPLANE_MAKE_HELP is used instead of CROSSPLANE_HELP is because the crossplane

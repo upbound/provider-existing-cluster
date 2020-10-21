@@ -22,19 +22,19 @@ import (
 	runtimev1alpha1 "github.com/crossplaneio/crossplane-runtime/apis/core/v1alpha1"
 )
 
-// A ProviderSpec defines the desired state of a Provider.
+// A ProviderSpec defines the desired state of a ProviderConfig.
 type ProviderSpec struct {
 	runtimev1alpha1.ProviderSpec `json:",inline"`
 }
 
 // +kubebuilder:object:root=true
 
-// A Provider configures a GCP 'provider', i.e. a connection to a particular
+// A ProviderConfig configures a GCP 'provider', i.e. a connection to a particular
 // GCP project using a particular GCP service account
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:printcolumn:name="SECRET-NAME",type="string",JSONPath=".spec.credentialsSecretRef.name",priority=1
 // +kubebuilder:resource:scope=Cluster
-type Provider struct {
+type ProviderConfig struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
@@ -43,9 +43,9 @@ type Provider struct {
 
 // +kubebuilder:object:root=true
 
-// ProviderList contains a list of Provider
+// ProviderList contains a list of ProviderConfig
 type ProviderList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []Provider `json:"items"`
+	Items           []ProviderConfig `json:"items"`
 }

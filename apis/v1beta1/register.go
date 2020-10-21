@@ -37,13 +37,13 @@ var (
 	SchemeBuilder = &scheme.Builder{GroupVersion: SchemeGroupVersion}
 )
 
-// Provider type metadata.
+// ProviderConfig type metadata.
 var (
-	ProviderKind             = reflect.TypeOf(Provider{}).Name()
+	ProviderKind             = reflect.TypeOf(ProviderConfig{}).Name()
 	ProviderKindAPIVersion   = ProviderKind + "." + SchemeGroupVersion.String()
 	ProviderGroupVersionKind = SchemeGroupVersion.WithKind(ProviderKind)
 )
 
 func init() {
-	SchemeBuilder.Register(&Provider{}, &ProviderList{})
+	SchemeBuilder.Register(&ProviderConfig{}, &ProviderList{})
 }

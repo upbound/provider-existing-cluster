@@ -1,6 +1,6 @@
-module github.com/turkenh/stack-existing-cluster
+module github.com/turkenh/provider-existing-cluster
 
-go 1.12
+go 1.13
 
 require (
 	github.com/crossplaneio/crossplane v0.8.0

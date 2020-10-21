@@ -1,7 +1,0 @@
-id: existingclusterclass
-title: ExistingClusterClass
-titlePlural: ExistingClusterClasses
-category: Compute
-overviewShort: "A ExistingClusterClass is a non-portable resource class. It defines the desired spec of resource claims that use it to dynamically provision a managed resource."
-overview: |
-  "A ExistingClusterClass is a non-portable resource class. It defines the desired spec of resource claims that use it to dynamically provision a managed resource."

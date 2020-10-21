@@ -26,8 +26,8 @@ import (
 
 	"github.com/crossplaneio/crossplane-runtime/pkg/logging"
 
-	"github.com/turkenh/stack-existing-cluster/apis"
-	"github.com/turkenh/stack-existing-cluster/pkg/controller"
+	"github.com/turkenh/provider-existing-cluster/apis"
+	"github.com/turkenh/provider-existing-cluster/pkg/controller"
 
 	crossplaneapis "github.com/crossplaneio/crossplane/apis"
 )
@@ -41,7 +41,7 @@ func main() {
 	kingpin.MustParse(app.Parse(os.Args[1:]))
 
 	zl := zap.New(zap.UseDevMode(*debug))
-	log := logging.NewLogrLogger(zl.WithName("stack-existing-cluster"))
+	log := logging.NewLogrLogger(zl.WithName("provider-existing-cluster"))
 	if *debug {
 		// The controller-runtime runs with a no-op logger by default. It is
 		// *very* verbose even at info level, so we only provide it a real

@@ -18,10 +18,10 @@ limitations under the License.
 package apis
 
 import (
-	"github.com/turkenh/stack-existing-cluster/apis/v1beta1"
+	"github.com/turkenh/provider-existing-cluster/apis/v1beta1"
 	"k8s.io/apimachinery/pkg/runtime"
 
-	containerv1beta1 "github.com/turkenh/stack-existing-cluster/apis/container/v1beta1"
+	containerv1beta1 "github.com/turkenh/provider-existing-cluster/apis/container/v1beta1"
 )
 
 func init() {

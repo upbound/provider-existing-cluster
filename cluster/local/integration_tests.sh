@@ -171,7 +171,7 @@ STACK_IMAGE="${DOCKER_REGISTRY}/${PROJECT_NAME}:master"
 K8S_CLUSTER="${K8S_CLUSTER:-${BUILD_REGISTRY}-INTTESTS}"
 
 CROSSPLANE_NAMESPACE="crossplane-system"
-STACK_NAME="stack-existing-cluster"
+STACK_NAME="provider-existing-cluster"
 STACK_NAMESPACE="gcp"
 
 # cleanup on exit

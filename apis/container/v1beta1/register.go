@@ -45,14 +45,6 @@ var (
 	ExistingClusterGroupVersionKind = SchemeGroupVersion.WithKind(ExistingClusterKind)
 )
 
-// ExistingClusterClass type metadata.
-var (
-	ExistingClusterClassKind             = reflect.TypeOf(ExistingClusterClass{}).Name()
-	ExistingClusterClassKindAPIVersion   = ExistingClusterClassKind + "." + SchemeGroupVersion.String()
-	ExistingClusterClassGroupVersionKind = SchemeGroupVersion.WithKind(ExistingClusterClassKind)
-)
-
 func init() {
 	SchemeBuilder.Register(&ExistingCluster{}, &ExistingClusterList{})
-	SchemeBuilder.Register(&ExistingClusterClass{}, &ExistingClusterClassList{})
 }
