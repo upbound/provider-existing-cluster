@@ -82,38 +82,3 @@ type ExistingClusterList struct {
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []ExistingCluster `json:"items"`
 }
-
-// A ExistingClusterClassSpecTemplate is a template for the spec of a dynamically
-// provisioned ExistingCluster.
-type ExistingClusterClassSpecTemplate struct {
-	runtimev1alpha1.ClassSpecTemplate `json:",inline"`
-	ForProvider                       ExistingClusterParameters `json:"forProvider,omitempty"`
-}
-
-// +kubebuilder:object:root=true
-
-// A ExistingClusterClass is a resource class. It defines the desired spec of
-// resource claims that use it to dynamically provision a managed
-// resource.
-// +kubebuilder:subresource:status
-// +kubebuilder:printcolumn:name="PROVIDER-REF",type="string",JSONPath=".specTemplate.providerRef.name"
-// +kubebuilder:printcolumn:name="RECLAIM-POLICY",type="string",JSONPath=".specTemplate.reclaimPolicy"
-// +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
-// +kubebuilder:resource:scope=Cluster
-type ExistingClusterClass struct {
-	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
-
-	// SpecTemplate is a template for the spec of a dynamically provisioned
-	// ExistingCluster.
-	SpecTemplate ExistingClusterClassSpecTemplate `json:"specTemplate"`
-}
-
-// +kubebuilder:object:root=true
-
-// ExistingClusterClassList contains a list of cloud memorystore resource classes.
-type ExistingClusterClassList struct {
-	metav1.TypeMeta `json:",inline"`
-	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []ExistingClusterClass `json:"items"`
-}

@@ -20,7 +20,7 @@ import (
 	"github.com/crossplaneio/crossplane-runtime/pkg/logging"
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	"github.com/turkenh/stack-existing-cluster/pkg/controller/container"
+	"github.com/turkenh/provider-existing-cluster/pkg/controller/container"
 )
 
 // Setup creates all GCP controllers with the supplied logger and adds them to
@@ -28,9 +28,6 @@ import (
 func Setup(mgr ctrl.Manager, l logging.Logger) error {
 	for _, setup := range []func(ctrl.Manager, logging.Logger) error{
 		container.SetupExistingCluster,
-		container.SetupExistingClusterClaimBinding,
-		container.SetupExistingClusterClaimDefaulting,
-		container.SetupExistingClusterClaimScheduling,
 	} {
 		if err := setup(mgr, l); err != nil {
 			return err

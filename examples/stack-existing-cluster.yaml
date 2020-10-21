@@ -2,7 +2,7 @@
 apiVersion: stacks.crossplane.io/v1alpha1
 kind: ClusterStackInstall
 metadata:
-  name: stack-existing-cluster
+  name: provider-existing-cluster
   namespace: crossplane-system
 spec:
-  package: "turkenh/stack-existing-cluster:master"
+  package: "turkenh/provider-existing-cluster:master"

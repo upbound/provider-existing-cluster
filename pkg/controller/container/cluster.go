@@ -34,8 +34,8 @@ import (
 	"github.com/crossplaneio/crossplane-runtime/pkg/reconciler/managed"
 	"github.com/crossplaneio/crossplane-runtime/pkg/resource"
 
-	"github.com/turkenh/stack-existing-cluster/apis/container/v1beta1"
-	v1beta12 "github.com/turkenh/stack-existing-cluster/apis/v1beta1"
+	"github.com/turkenh/provider-existing-cluster/apis/container/v1beta1"
+	v1beta12 "github.com/turkenh/provider-existing-cluster/apis/v1beta1"
 )
 
 // Error strings.
@@ -144,7 +144,7 @@ func connectionDetails(rawConfig []byte) managed.ConnectionDetails {
 	user := config.Contexts[ctx].AuthInfo
 	cd := managed.ConnectionDetails{
 		runtimev1alpha1.ResourceCredentialsSecretEndpointKey: []byte(config.Clusters[cluster].Server),
-		//runtimev1alpha1.ResourceCredentialsSecretUserKey:       []byte(config.AuthInfos[user].Username),
+		// runtimev1alpha1.ResourceCredentialsSecretUserKey:       []byte(config.AuthInfos[user].Username),
 		runtimev1alpha1.ResourceCredentialsSecretUserKey:       []byte(user),
 		runtimev1alpha1.ResourceCredentialsSecretPasswordKey:   []byte(config.AuthInfos[user].Password),
 		runtimev1alpha1.ResourceCredentialsSecretCAKey:         config.Clusters[cluster].CertificateAuthorityData,
