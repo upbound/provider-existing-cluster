@@ -4,4 +4,4 @@ metadata:
   name: provider-existing-cluster
 spec:
   controller:
-    image: turkenh/provider-existing-cluster-controller:VERSION
+    image: upbound/provider-existing-cluster-controller:VERSION
